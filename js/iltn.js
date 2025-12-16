@@ -28,12 +28,22 @@ const roomTitle = document.getElementById('current-room-name');
 const watch_button = document.getElementById('watch');
 const play_button = document.getElementById('play');
 const leave_button = document.getElementById('leave');
+const mobile_buttons = document.getElementById('mobile-buttons')
 
 const playNote = (key) => {
     if (notes[key]) {
         synth.triggerAttackRelease(notes[key], "8n");
     }
 };
+
+mobile_buttons.addEventListener("click", async (event) => {
+    if (!isConnected) return;
+    if (notes[event.target.id]) {
+        await Tone.start();
+        playNote(event.target.id);
+        ws.send(JSON.stringify({ type: "note", key: event.target.id }));
+    }
+});
 
 window.addEventListener("keydown", async (event) => {
     if (!isConnected || event.repeat) return;
